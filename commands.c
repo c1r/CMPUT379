@@ -38,37 +38,8 @@ void terminate_task(int);
 void terminate_alltasks(clock_t, struct tms *tmsstart);
 void quit_maintask(clock_t, struct tms *tmsstart);
 void print_times(clock_t realTime, struct tms *tmsstart, struct tms *tmsend);
-/* char* split(char inStr[],  char token[][MAXWORD], char fs[])
-{
-    int i, count;
-    char *tokenp, inStrCopy[MAXLINE];
-    count = 0;
-    memset (inStrCopy, 0, sizeof(inStrCopy));
-    for (i=0; i < MAX_NTOKEN; i++) memset (token[i], 0, sizeof(token[i]));
 
-    strcpy (inStrCopy, inStr);
-    if ( (tokenp= strtok(inStr, fs)) == NULL) return(0);
-
-    strcpy(token[count],tokenp); count++;
-
-    while ( (tokenp= strtok(NULL, fs)) != NULL) {
-        strcpy(token[count],tokenp); count++;
-    }
-    strcpy (inStr, inStrCopy);
-    return token;
-} */
-
-/* void split(char *buf,char *array){
-    int i=0;
-    char *p = strtok(buf, " ");
-
-    while (p!=NULL){
-        strcpy(array[i++],p);
-        p = strtok(NULL, " ");
-    }
-} */
-
-int split(char inStr[], char token[MAX_NTOKEN][MAXLINE], char fs[])
+/* int split(char inStr[], char token[MAX_NTOKEN][MAXLINE], char fs[])
 {
     int i, count;
     char *tokenp, inStrCopy[MAXLINE];
@@ -92,7 +63,7 @@ int split(char inStr[], char token[MAX_NTOKEN][MAXLINE], char fs[])
     }
     strcpy(inStr, inStrCopy);
     return (count);
-}
+} */
 
 void input_p(char *input, clock_t startTime, struct tms *tmsstart)
 {
@@ -348,7 +319,7 @@ void quit_maintask(clock_t startTime, struct tms *tmsstart)
     _exit(EXIT_SUCCESS);
 }
 
-void print_times(clock_t realTime, struct tms *tmsstart, struct tms *tmsend)
+/* void print_times(clock_t realTime, struct tms *tmsstart, struct tms *tmsend)
 {
     long clktck = 0;
 
@@ -373,7 +344,7 @@ void print_times(clock_t realTime, struct tms *tmsstart, struct tms *tmsend)
 
     printf("   child sys:%7.2f\n",
            (tmsend->tms_cstime - tmsstart->tms_cstime) / (double)clktck);
-}
+} */
 
 void print_directory()
 {
