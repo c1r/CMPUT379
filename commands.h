@@ -12,6 +12,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/times.h>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/times.h>
+#include <sys/wait.h>
 
 // void done(pid_t pid);
 int cd(char *pathname);
@@ -22,10 +27,9 @@ void lstasks();
 void check_task(char *targetID);
 void stop_task(int);
 void continue_task(int);
-void terminate(int);
-void terminate_alltasks(clock_t, struct rlimit *rlim);
-void quit_maintask(clock_t, struct rlimit *rlim);
-// void print_pr_times(clock_t real_time, struct tms *tmsstart, struct tms *tmsend);
-int split(char inStr[], char token[][MAXWORD], char fs[]);
+void terminate_task(int);
+void terminate_alltasks(clock_t, struct tms *startTime);
+void quit_maintask(clock_t, struct tms *startTime);
+
 
 #endif

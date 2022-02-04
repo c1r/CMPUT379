@@ -14,6 +14,9 @@
 #include <sys/resource.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <sys/times.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 struct processes
 {
@@ -24,9 +27,6 @@ struct processes
 extern struct processes proc[32];
 extern int counter;
 
-// void get_time(char* buffer);
-// void get_sysinfo();
-// void print_error(int error);
-// void input_p(char* input);
+void input_p(char *input, clock_t startTime, struct tms *tmsstart);
 
 #endif

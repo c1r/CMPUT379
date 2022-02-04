@@ -15,6 +15,7 @@
 #include <sys/times.h>
 #include <sys/wait.h>
 #include "msh379.h"
+#include "util.h"
 
 #define MAXLINE 260
 #define MAX_NTOKEN MAXLINE
@@ -37,35 +38,8 @@ void continue_task(int);
 void terminate_task(int);
 void terminate_alltasks(clock_t, struct tms *tmsstart);
 void quit_maintask(clock_t, struct tms *tmsstart);
-void print_times(clock_t realTime, struct tms *tmsstart, struct tms *tmsend);
 
-/* int split(char inStr[], char token[MAX_NTOKEN][MAXLINE], char fs[])
-{
-    int i, count;
-    char *tokenp, inStrCopy[MAXLINE];
-
-    count = 0;
-    memset(inStrCopy, 0, sizeof(inStrCopy));
-    for (i = 0; i < MAXLINE; i++)
-        memset(token[i], 0, sizeof(token[i]));
-
-    strcpy(inStrCopy, inStr);
-    if ((tokenp = strtok(inStr, fs)) == NULL)
-        return (0);
-
-    strcpy(token[count], tokenp);
-    count++;
-
-    while ((tokenp = strtok(NULL, fs)) != NULL)
-    {
-        strcpy(token[count], tokenp);
-        count++;
-    }
-    strcpy(inStr, inStrCopy);
-    return (count);
-} */
-
-void input_p(char *input, clock_t startTime, struct tms *tmsstart)
+/* void input_p(char *input, clock_t startTime, struct tms *tmsstart)
 {
     char array[MAX_NTOKEN][MAXLINE];
     // printf("I'm here first lads %s\n",input);
@@ -113,7 +87,7 @@ void input_p(char *input, clock_t startTime, struct tms *tmsstart)
     {
         run_command(input);
     }
-}
+} */
 
 int cd(char *pathname)
 {
@@ -141,7 +115,7 @@ int cd(char *pathname)
         char *delim = "";
         char *rest = strtok(NULL, delim);
 
-        if (rest != '\0')
+        if (*rest != '\0')
         {
             // adding a '/' before appending the rest of the pathname directory
             strcat(final_directory, "/");
@@ -208,8 +182,9 @@ void check_task(char *targetID)
             if (pid == targetPID)
             {
                 printf("%s", line);
+                // printf("target_pid = %d running:\n",pid);
                 if (strcmp(state, "Z") == 0)
-                {
+                {   printf("target_pid = %d terminated\n",pid);
                     break;
                     listPID[numOfPID] = pid;
                     numOfPID++;
@@ -270,7 +245,7 @@ void terminate_task(int task)
 {
     if (proc[task].index == task && strcmp(proc[task].command, "") != 0)
     {
-        printf("%d: (pid: %d, cmd: %s) terminated", proc[task].index, proc[task].pid, proc[task].command);
+        printf("%d: (pid: %d, cmd: %s) terminated\n", proc[task].index, proc[task].pid, proc[task].command);
 
         kill(proc[task].pid, SIGCONT);
         kill(proc[task].pid, SIGTERM);
@@ -318,33 +293,6 @@ void quit_maintask(clock_t startTime, struct tms *tmsstart)
     kill(getpid(), SIGKILL);
     _exit(EXIT_SUCCESS);
 }
-
-/* void print_times(clock_t realTime, struct tms *tmsstart, struct tms *tmsend)
-{
-    long clktck = 0;
-
-    if (clktck == 0)
-    {
-        if ((clktck = sysconf(_SC_CLK_TCK)) < 0)
-        {
-            printf("Failed to fetch clock ticks per second\n");
-        }
-    }
-
-    printf("   real:%12.2f\n", realTime / (double)clktck);
-
-    printf("   user:%12.2f\n",
-           (tmsend->tms_utime - tmsstart->tms_utime) / (double)clktck);
-
-    printf("   sys:%13.2f\n",
-           (tmsend->tms_stime - tmsstart->tms_stime) / (double)clktck);
-
-    printf("   child user:%6.2f\n",
-           (tmsend->tms_cutime - tmsstart->tms_cutime) / (double)clktck);
-
-    printf("   child sys:%7.2f\n",
-           (tmsend->tms_cstime - tmsstart->tms_cstime) / (double)clktck);
-} */
 
 void print_directory()
 {
