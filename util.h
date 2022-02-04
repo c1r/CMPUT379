@@ -2,9 +2,8 @@
  *
  * Name: Nidal Naseem
  * Student ID: 1635297
- * CMPUT 379, Assignment 1 Winter 2022
+ * CMPUT 379, Assignment 1 - Winter 2022
  */
-
 
 #ifndef util_h
 #define util_h

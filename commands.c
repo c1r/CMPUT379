@@ -21,13 +21,6 @@
 #define MAX_NTOKEN MAXLINE
 #define MAXWORD 32
 
-/* struct processes{
-    pid_t pid;
-    char command[60];
-    int index;
-
-}proc[32]; */
-
 int cd(char *pathname);
 void print_directory();
 void run_command(char *command);
@@ -38,56 +31,6 @@ void continue_task(int);
 void terminate_task(int);
 void terminate_alltasks(clock_t, struct tms *tmsstart);
 void quit_maintask(clock_t, struct tms *tmsstart);
-
-/* void input_p(char *input, clock_t startTime, struct tms *tmsstart)
-{
-    char array[MAX_NTOKEN][MAXLINE];
-    // printf("I'm here first lads %s\n",input);
-    split(input, array, " ");
-    // printf("First token %s",array[1]);
-    if (strcmp(array[0], "cdir") == 0)
-    {
-        char pathname[sizeof(array[1])];
-        strcpy(pathname, array[1]);
-        cd(pathname);
-    }
-    else if (strcmp(array[0], "pdir") == 0)
-    {
-        print_directory();
-    }
-    else if (strcmp(array[0], "lstasks") == 0)
-    {
-        lstasks();
-    }
-    else if (strcmp(array[0], "check") == 0)
-    {
-        check_task(array[1]);
-    }
-    else if (strcmp(array[0], "stop") == 0)
-    {
-        stop_task(atoi(array[1]));
-    }
-    else if (strcmp(array[0], "continue") == 0)
-    {
-        continue_task(atoi(array[1]));
-    }
-    else if (strcmp(array[0], "terminate") == 0)
-    {
-        terminate_task(atoi(array[1]));
-    }
-    else if (strcmp(array[0], "exit") == 0)
-    {
-        terminate_alltasks(startTime, tmsstart);
-    }
-    else if (strcmp(array[0], "quit") == 0)
-    {
-        quit_maintask(startTime, tmsstart);
-    }
-    else if (input != "")
-    {
-        run_command(input);
-    }
-} */
 
 int cd(char *pathname)
 {
@@ -165,7 +108,7 @@ void check_task(char *targetID)
     fp = popen("ps -u $USER -o user,pid,ppid,state,start,cmd --sort start", "r");
     if (fp)
     {
-
+        printf("target_pid = %d\n",targetPID);
         while (fgets(line, MAXLINE, fp) != NULL)
         {
             if (strstr(line, "PID"))
@@ -184,7 +127,8 @@ void check_task(char *targetID)
                 printf("%s", line);
                 // printf("target_pid = %d running:\n",pid);
                 if (strcmp(state, "Z") == 0)
-                {   printf("target_pid = %d terminated\n",pid);
+                {
+
                     break;
                     listPID[numOfPID] = pid;
                     numOfPID++;
@@ -253,13 +197,7 @@ void terminate_task(int task)
         proc[task].index = '\0';
         proc[task].pid = '\0';
         strcpy(proc[task].command, "\0");
-        // waitpid(proc[task].pid,NULL,0);
-        // kill(proc[task].pid, SIGKILL);
-        //_exit(EXIT_SUCCESS);
     }
-    /* else{
-        printf("Couldn't find task with index: %d\n", task);
-    } */
 }
 
 void terminate_alltasks(clock_t startTime, struct tms *tmsstart)
@@ -314,13 +252,6 @@ void run_command(char *command)
     char token[MAX_NTOKEN][MAXLINE];
     memmove(command, command + 4, strlen(command));
     int argtoken_size = split(command, token, " ");
-    // int taskNo = (sizeof(proc) /sizeof(proc[0]));
-    // printf("%d ", argtoken_size);
-
-    // tokens[sizeof(tokens)-1]='\0';
-    // printf("I'm here bitches\n");
-
-    // startTime = times(&tmsstart);
 
     pid_t pid = fork();
     // printf("%d",pid);
