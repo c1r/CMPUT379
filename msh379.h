@@ -1,6 +1,12 @@
+/*
+ *
+ * Name: Nidal Naseem
+ * Student ID: 1635297
+ * CMPUT 379, Assignment 1 Winter 2022
+ */
+
 #ifndef msh379_h
 #define msh379_h
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +15,8 @@
 #include <time.h>
 #include <sys/stat.h>
 
-struct processes{
+struct processes
+{
     pid_t pid;
     char command[60];
     int index;
@@ -17,9 +24,9 @@ struct processes{
 extern struct processes proc[32];
 extern int counter;
 
-//void get_time(char* buffer);
-//void get_sysinfo();
-//void print_error(int error);
-//void input_p(char* input);
+// void get_time(char* buffer);
+// void get_sysinfo();
+// void print_error(int error);
+// void input_p(char* input);
 
 #endif
