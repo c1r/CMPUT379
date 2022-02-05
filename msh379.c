@@ -20,19 +20,24 @@
 struct processes proc[32];
 int counter;
 
-//void input_p(char *input, clock_t startTime, struct tms *tmsstart);
-
 void input_p(char *input, clock_t startTime, struct tms *tmsstart)
 {
     char array[MAX_NTOKEN][MAXLINE];
-    // printf("I'm here first lads %s\n",input);
+    // splitting the input from users into token to seperate commands and arguments
     split(input, array, " ");
-    // printf("First token %s",array[1]);
+
     if (strcmp(array[0], "cdir") == 0)
     {
-        char pathname[sizeof(array[1])];
-        strcpy(pathname, array[1]);
-        cd(pathname);
+        if (strcmp(array[1], "") == 0)
+        {
+            printf("Please enter the path to change the current directory to: \n");
+        }
+        else
+        {
+            char pathname[sizeof(array[1])];
+            strcpy(pathname, array[1]);
+            cd(pathname);
+        }
     }
     else if (strcmp(array[0], "pdir") == 0)
     {
@@ -44,19 +49,47 @@ void input_p(char *input, clock_t startTime, struct tms *tmsstart)
     }
     else if (strcmp(array[0], "check") == 0)
     {
-        check_task(array[1]);
+        if (strcmp(array[1], "") == 0)
+        {
+            printf("Please enter the pid to check: \n");
+        }
+        else
+        {
+            check_task(array[1]);
+        }
     }
     else if (strcmp(array[0], "stop") == 0)
     {
-        stop_task(atoi(array[1]));
+        if (strcmp(array[1], "") == 0)
+        {
+            printf("Please enter the pid of the process to be stopped \n");
+        }
+        else
+        {
+            stop_task(atoi(array[1]));
+        }
     }
     else if (strcmp(array[0], "continue") == 0)
     {
-        continue_task(atoi(array[1]));
+        if (strcmp(array[1], "") == 0)
+        {
+            printf("Please enter the pid to be resumed \n");
+        }
+        else
+        {
+            continue_task(atoi(array[1]));
+        }
     }
     else if (strcmp(array[0], "terminate") == 0)
     {
-        terminate_task(atoi(array[1]));
+        if (strcmp(array[1], "") == 0)
+        {
+            printf("Please enter the pid to be terminated \n");
+        }
+        else
+        {
+            terminate_task(atoi(array[1]));
+        }
     }
     else if (strcmp(array[0], "exit") == 0)
     {
@@ -66,15 +99,22 @@ void input_p(char *input, clock_t startTime, struct tms *tmsstart)
     {
         quit_maintask(startTime, tmsstart);
     }
-    else if (strcmp(input,"")!=0)
+    else if (strcmp(array[0], "run") == 0)
     {
-        run_command(input);
+        if (strlen(input) < 4)
+        {
+            printf("Enter command to be run\n");
+        }
+        else
+        {
+            run_command(input);
+        }
     }
 }
 
 int main(int argc, char *argv[])
 {
-    // struct processes proc[32];
+    // counter for NTASKS
     counter = 0;
 
     //----Start recording time----------//
@@ -85,6 +125,12 @@ int main(int argc, char *argv[])
     struct rlimit rlim;
     getrlimit(RLIMIT_CPU, &rlim);
     rlim.rlim_cur = 600;
+
+    if (startTime == -1)
+    {
+        printf("Failed to record the end time\n");
+    }
+
     if (setrlimit(RLIMIT_CPU, &rlim) == -1)
     {
         fprintf(stderr, "%s", "Failed to set CPU time limit\n");
@@ -94,8 +140,9 @@ int main(int argc, char *argv[])
     {
         printf("msh379 [%d]: ", getpid());
         char input[60];
-        // scanf("%s", input);
+
         fgets(input, 60, stdin);
+        // removing the \n after fgets
         input[strlen(input) - 1] = '\0';
         input_p(input, startTime, &tmsstart);
     }

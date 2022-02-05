@@ -21,27 +21,20 @@
 #define MAX_NTOKEN MAXLINE
 #define MAXWORD 32
 
-int cd(char *pathname);
-void print_directory();
-void run_command(char *command);
-void lstasks();
-void check_task(char *targetPID);
-void stop_task(int);
-void continue_task(int);
-void terminate_task(int);
-void terminate_alltasks(clock_t, struct tms *tmsstart);
-void quit_maintask(clock_t, struct tms *tmsstart);
+/* Function that changes the current directory to the one that is passed by the
+   user*
 
+   Arguments: pathname to which current directory is to be changed
+   */
 int cd(char *pathname)
 {
     char final_directory[MAXLINE];
-    // printf("%s Im here lads", pathname);
 
+    // removing the '$' to get the directory of the environment variable passed
     if (pathname[0] == '$')
     {
         memmove(pathname, pathname + 1, strlen(pathname));
 
-        // To obtain env variable expansion and thus its directory
         char *env_varexp = strtok(pathname, "/\n");
         char *env_var_dir = getenv(env_varexp);
         if (env_var_dir == NULL)
@@ -50,7 +43,7 @@ int cd(char *pathname)
             return -1;
         }
 
-        // Copying to final
+        // Copying directory of the environment to remaining path
         strcpy(final_directory, env_var_dir);
 
         // To obtain the directory after the env_var
@@ -83,7 +76,8 @@ int cd(char *pathname)
 
 void lstasks()
 {
-    // printf("counter: %d", counter);
+    // looping through the struct array that hold accepted tasks to print all tasks
+    // to output
     for (int i = 0; i < counter; i++)
     {
         if (strcmp(proc[i].command, "") != 0)
@@ -92,7 +86,12 @@ void lstasks()
         }
     }
 }
+/*
+   Function that checks the status of a pid that is passed by the user and prints the processes'
+   information
 
+   Arguments: target_ID : the PID of the process who's descendents are to be printed
+   */
 void check_task(char *targetID)
 {
     FILE *fp;
@@ -108,7 +107,7 @@ void check_task(char *targetID)
     fp = popen("ps -u $USER -o user,pid,ppid,state,start,cmd --sort start", "r");
     if (fp)
     {
-        printf("target_pid = %d\n",targetPID);
+        printf("target_pid = %d\n", targetPID);
         while (fgets(line, MAXLINE, fp) != NULL)
         {
             if (strstr(line, "PID"))
@@ -125,7 +124,6 @@ void check_task(char *targetID)
             if (pid == targetPID)
             {
                 printf("%s", line);
-                // printf("target_pid = %d running:\n",pid);
                 if (strcmp(state, "Z") == 0)
                 {
 
@@ -138,7 +136,6 @@ void check_task(char *targetID)
             if (ppid == targetPID)
             {
                 printf("%s", line);
-
                 listPID[numOfPID] = pid;
                 numOfPID++;
             }
@@ -148,7 +145,6 @@ void check_task(char *targetID)
                 if (listPID[i] == ppid)
                 {
                     printf("%s", line);
-
                     listPID[numOfPID] = pid;
                     numOfPID++;
                 }
@@ -158,7 +154,7 @@ void check_task(char *targetID)
 
     status = pclose(fp);
     if (status == -1)
-        printf("Close failed\n");
+        printf("Failed to close pipe\n");
 }
 
 void stop_task(int task)
@@ -194,6 +190,9 @@ void terminate_task(int task)
         kill(proc[task].pid, SIGCONT);
         kill(proc[task].pid, SIGTERM);
         kill(proc[task].pid, SIGKILL);
+
+        // resetting the pid, command for this taskno so that it
+        // doesnt show up when 'lstask'ed
         proc[task].index = '\0';
         proc[task].pid = '\0';
         strcpy(proc[task].command, "\0");
@@ -202,6 +201,7 @@ void terminate_task(int task)
 
 void terminate_alltasks(clock_t startTime, struct tms *tmsstart)
 {
+    // applies the terminate function to all elements in the global struct array
     for (int i = 0; i < counter; i++)
     {
         terminate_task(i);
@@ -247,23 +247,25 @@ void print_directory()
 
 void run_command(char *command)
 {
-    // clock_t startTime, endTime;
-    // struct tms tmsstart, tmsend;
+
     char token[MAX_NTOKEN][MAXLINE];
+
+    // removes the run keyword from input before tokenizing the string
     memmove(command, command + 4, strlen(command));
     int argtoken_size = split(command, token, " ");
 
     pid_t pid = fork();
-    // printf("%d",pid);
+
     if (pid < 0)
     {
         fprintf(stderr, "%s", "Fork was not successfull");
     }
     else if (pid == 0)
     {
-        // printf( "This is being printed from the child process\n" );
-        // Child
+        // Child process, for execlp
+        // Four cases, depending on the number of arguments (max. 4)
 
+        // execlp exits if the execution fails
         switch (argtoken_size)
         {
         case 1:
@@ -287,35 +289,25 @@ void run_command(char *command)
                 _exit(EXIT_FAILURE);
             break;
         default:
-            printf("Error");
+            printf("Too many arguments (Max: 5 allowed");
         }
     }
     else
     {
-        // printf( "This is being printed in the parent process:\n"
-        //       " - the process identifier (pid) of the child is %d\n", pid );
         // Parent
         if (waitpid(pid, NULL, WNOHANG) < 0)
         {
-            printf("Wait falied");
+            printf("Wait on process failed");
         }
-        // printf("Strting to track tasks No %d:", counter);
+
+        // Recording the information of an accepted task on a global struct array
         if (counter < 32)
         {
 
             proc[counter].index = counter;
             proc[counter].pid = pid;
             strcpy(proc[counter].command, command);
-            // printf("%d", proc[counter].pid);
             counter++;
-            // if(counter > 1){
-            // printf("%s", proc[counter-2].command);}
         }
-
-        // endTime = times(&tmsend);
-
-        // clock_t totalTime = endTime - startTime;
-        // print_time(totalTime, &tmsstart, &tmsend);
     }
-    // All tasks must be recorded
 }

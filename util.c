@@ -19,6 +19,7 @@
 #define MAX_NTOKEN MAXLINE
 #define MAXWORD 32
 
+// Function to tokenize a string, provided by the course instructor
 int split(char inStr[], char token[MAX_NTOKEN][MAXLINE], char fs[])
 {
     int i, count;
@@ -45,6 +46,8 @@ int split(char inStr[], char token[MAX_NTOKEN][MAXLINE], char fs[])
     return (count);
 }
 
+/* Function that prints the time passed *
+   Args: real time, pointer to struct of starting time and ending time */
 void print_times(clock_t realTime, struct tms *tmsstart, struct tms *tmsend)
 {
     long clktck = 0;
@@ -57,17 +60,17 @@ void print_times(clock_t realTime, struct tms *tmsstart, struct tms *tmsend)
         }
     }
 
-    printf("   real:%12.2f\n", realTime / (double)clktck);
+    printf("  real:%12.2f\n", realTime / (double)clktck);
 
-    printf("   user:%12.2f\n",
+    printf("  user:%12.2f\n",
            (tmsend->tms_utime - tmsstart->tms_utime) / (double)clktck);
 
-    printf("   sys:%13.2f\n",
+    printf("  sys:%13.2f\n",
            (tmsend->tms_stime - tmsstart->tms_stime) / (double)clktck);
 
-    printf("   child user:%6.2f\n",
+    printf("  child user:%6.2f\n",
            (tmsend->tms_cutime - tmsstart->tms_cutime) / (double)clktck);
 
-    printf("   child sys:%7.2f\n",
+    printf("  child sys:%7.2f\n",
            (tmsend->tms_cstime - tmsstart->tms_cstime) / (double)clktck);
 }

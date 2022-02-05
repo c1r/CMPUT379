@@ -18,9 +18,7 @@
 #include <sys/times.h>
 #include <sys/wait.h>
 
-// void done(pid_t pid);
 int cd(char *pathname);
-// void print_umask();
 void print_directory();
 void run_command(char *command);
 void lstasks();
@@ -30,6 +28,5 @@ void continue_task(int);
 void terminate_task(int);
 void terminate_alltasks(clock_t, struct tms *startTime);
 void quit_maintask(clock_t, struct tms *startTime);
-
 
 #endif

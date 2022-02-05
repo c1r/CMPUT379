@@ -18,6 +18,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 
+// GLOBAL struct that keeps tracks of the information of all accepted tasks
 struct processes
 {
     pid_t pid;
